@@ -1,0 +1,31 @@
+{
+  "_description": "Template for recording SubVIO-Stress-Bench experiment metadata. Copy and fill in for each run.",
+  "experiment_id": "YYYY-MM-DD_HH-MM-SS_short-description",
+  "timestamp": "YYYY-MM-DDTHH:MM:SSZ",
+  "method": {
+    "name": "TODO",
+    "version": "TODO",
+    "config_file": "configs/TODO.yaml"
+  },
+  "dataset": {
+    "name": "CERBERUS",
+    "sequences": ["TODO"],
+    "split": "TODO"
+  },
+  "perturbation": {
+    "type": "none",
+    "parameters": {}
+  },
+  "environment": {
+    "platform": "TODO",
+    "python_version": "TODO",
+    "key_packages": {}
+  },
+  "metrics": {
+    "ATE_rmse": null,
+    "RPE_t_mean": null,
+    "RPE_r_mean": null,
+    "failure_rate": null
+  },
+  "notes": ""
+}

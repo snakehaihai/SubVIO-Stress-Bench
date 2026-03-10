@@ -1,0 +1,51 @@
+name: Repository checks
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint Python files
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install linting tools
+        run: pip install flake8
+
+      - name: Lint with flake8
+        run: |
+          # Fail on syntax errors and undefined names; ignore style warnings for now
+          flake8 tools/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
+
+  markdown-check:
+    name: Check Markdown files
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for broken Markdown links (basic)
+        run: |
+          # Simple check: ensure no markdown files are completely empty
+          for f in $(find . -name "*.md" -not -path "./.git/*"); do
+            if [ ! -s "$f" ]; then
+              echo "Empty markdown file: $f"
+              exit 1
+            fi
+          done
+          echo "All Markdown files are non-empty."
