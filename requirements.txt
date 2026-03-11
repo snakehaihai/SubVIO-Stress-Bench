@@ -1,0 +1,25 @@
+# Python dependencies for SubVIO-Stress-Bench
+#
+# This file lists the core Python packages required to run the benchmark
+# evaluation and analysis scripts.
+#
+# Install with:
+#   pip install -r requirements.txt
+#
+# For a fully reproducible environment, prefer using environment.yml with Conda.
+#
+# TODO: Populate with actual dependency versions once confirmed from existing scripts.
+
+# Data handling
+numpy>=1.21
+pandas>=1.3
+scipy>=1.7
+
+# Visualization
+matplotlib>=3.4
+
+# Configuration
+PyYAML>=6.0
+
+# Utilities
+tqdm>=4.60
