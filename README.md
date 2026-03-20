@@ -3,7 +3,7 @@
 [![Paper](https://img.shields.io/badge/paper-TODO-blue)]()
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue)]()
-[![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20macOS-lightgrey)]()
+[![Platform](https://img.shields.io/badge/platform-Ubuntu20.04%20%7C%20macOS-lightgrey)]()
 
 **SubVIO-Stress-Bench** is a failure-centric stress-test benchmark for visual-inertial odometry (VIO)
 in subterranean environments.
