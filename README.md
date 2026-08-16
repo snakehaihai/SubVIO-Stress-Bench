@@ -69,15 +69,15 @@ instead of silently claiming deterministic bias injection.
 
 ## Evaluated Method Categories
 
-| Category | Representative Methods |
+| Design paradigm | Algorithm |
 |---|---|
-| Filter-based | OpenVINS |
-| Optimization-based (sliding window) | SchurVINS |
-| Learning-based / Neural | AirSLAM learned feature front end |
-| Hybrid | ORB-SLAM3 factor-graph pipeline; AirSLAM learned front end with geometric back end |
+| Learning-based front-end | [AirSLAM](https://github.com/sair-lab/AirSLAM) |
+| Filtering-based VIO | [OpenVINS](https://docs.openvins.com/) |
+| Global optimization-based SLAM | [ORB-SLAM3](https://github.com/UZ-SLAMLab/ORB_SLAM3) |
+| Schur-complement optimization-based VIO | [SchurVINS](https://github.com/bytedance/SchurVINS) |
 
-The categories describe the components emphasized in this study and are not
-mutually exclusive. Reference revisions are listed in
+The categories follow the estimator distinctions used by the benchmark.
+Reference revisions are listed in
 [`configs/method_versions.yaml`](configs/method_versions.yaml).
 
 ---
