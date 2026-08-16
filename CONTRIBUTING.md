@@ -67,8 +67,9 @@ Please open an issue with:
 ```bash
 git clone https://github.com/snakehaihai/SubVIO-Stress-Bench.git
 cd SubVIO-Stress-Bench
-conda env create -f environment.yml
-conda activate subvio-bench
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
 ```
 
 ---

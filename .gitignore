@@ -40,6 +40,9 @@ results/outputs/
 results/figures/
 results/summaries/
 results/tables/
+results/runs/
+results/self-test/
+results/local_asset_index.json
 !results/logs/.gitkeep
 !results/outputs/.gitkeep
 !results/figures/.gitkeep
@@ -89,3 +92,4 @@ htmlcov/
 *.pem
 secrets.yaml
 secrets.json
+configs/local_paths.yaml

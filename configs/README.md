@@ -1,53 +1,63 @@
 # configs/
 
-This directory stores experiment configuration files in YAML format.
+This directory stores the paper protocol, benchmark adapter configurations,
+method revision records, and a portable local-path template.
 
 ## Structure
 
-```
+```text
 configs/
-├── README.md              # This file
-├── default.yaml           # Default benchmark configuration (TODO)
-└── perturbations/         # Per-perturbation configuration files (TODO)
-    ├── imu_noise.yaml
-    ├── image_blur.yaml
-    ├── extrinsic_offset.yaml
-    ├── temporal_offset.yaml
-    └── ...
+├── README.md                 # This file
+├── default.yaml              # Disabled real-method adapter examples
+├── self_test.yaml            # Portable deterministic smoke test
+├── paper_protocol.yaml       # Paper-derived experiment and metric contract
+├── method_versions.yaml      # Reference upstream revisions
+└── local_paths.example.yaml  # Template for ignored workstation paths
 ```
+
+The 1,782 generated method configurations are stored under
+`experiment_assets/snapshot/`, where their checksums and provenance are tracked
+by `experiment_assets/manifest.json`.
 
 ## Usage
 
-Specify a configuration file when running the benchmark:
+Validate and inspect a configuration before enabling real commands:
 
 ```bash
-# TODO: update with actual run command
-python scripts/run_benchmark.py --config configs/default.yaml
+cp configs/default.yaml configs/local.yaml
+python -c "from subvio_bench.config import load_config; load_config('configs/local.yaml')"
+python scripts/run_all.py --config configs/local.yaml --include-disabled --dry-run
+python scripts/run_all.py --config configs/local.yaml
 ```
+
+Use `configs/local_paths.yaml`, copied from the example, for workstation paths.
+Local configuration files are ignored by Git.
 
 ## Format
 
-Each configuration file follows this general structure:
+The benchmark runner schema is version 1:
 
 ```yaml
-dataset:
-  root: /path/to/data/cerberus
-  sequences:
-    - sequence_01
-
-perturbation:
-  type: none  # or: imu_noise, image_blur, extrinsic_offset, temporal_offset, ...
-  # perturbation-specific parameters follow
-
-methods:
-  - name: TODO
-    # method-specific parameters
-
-evaluation:
-  metrics:
-    - ATE
-    - RPE_t
-    - RPE_r
+schema_version: 1
+workspace:
+  output_root: results/runs
+experiments:
+  - id: unique-run-id
+    enabled: false
+    method: AirSLAM
+    sequence: seq1
+    command: [bash, /path/to/run.sh]
+    trajectory: /path/to/estimated_tum.txt
+    ground_truth: /path/to/ground_truth_tum.txt
+    timeout_s: 3600
+    perturbation:
+      dimension: acc_noise
+      level: 1.0
+      seed: 0
 ```
 
-<!-- TODO: Add actual configuration files once benchmark scripts are finalized -->
+`id`, `method`, `sequence`, `command`, and `trajectory` are required for each
+experiment. IDs must be unique. Optional fields include `ground_truth`, `cwd`,
+`env`, `timeout_s`, `enabled`, and `perturbation`. Environment variables such
+as `${HOME}` are expanded at load time; absolute local paths must not be
+committed.

@@ -1,0 +1,83 @@
+schema_version: 1
+source:
+  title: "How to Prevent Visual-Inertial Odometry Failure: A Comprehensive Robustness Analysis of Sensor Sensitivity and Obstacle Resilience"
+  manuscript: IROS_2026_Visual_SLAM_Study.pdf
+  status: anonymous_draft
+
+dataset:
+  name: DARPA Subterranean Challenge CERBERUS
+  sequences: [seq0, seq1, seq2, seq3, seq4, seq5, seq6, seq7]
+  total_duration_min_approx: 22
+  camera:
+    model: Sevensense Alphasense Core stereo
+    resolution: [720, 540]
+    rate_hz: 20
+  imu_rate_hz: 200
+  ground_truth: CompSLAM post-processed state registered to a global map
+  trajectory_format: TUM
+
+methods: [AirSLAM, OpenVINS, ORB-SLAM3, SchurVINS]
+
+sensor_stress:
+  design: one_at_a_time
+  sequence: seq1
+  sequence_source: local_implementation_not_explicitly_named_in_paper
+  seeds: [0, 1, 2]
+  dimensions:
+    acc_bias:
+      operation: multiply_nominal
+      levels: [0.01, 0.0251188643, 0.0630957344, 0.1584893192, 0.3981071706, 1.0, 2.5118864315, 6.3095734448, 15.8489319246, 39.8107170553, 100.0]
+      note: adapters modify the bias random-walk parameters
+    gyro_bias:
+      operation: multiply_nominal
+      levels: [0.01, 0.0251188643, 0.0630957344, 0.1584893192, 0.3981071706, 1.0, 2.5118864315, 6.3095734448, 15.8489319246, 39.8107170553, 100.0]
+      note: adapters modify the bias random-walk parameters
+    acc_noise:
+      operation: multiply_nominal
+      levels: [0.01, 0.0251188643, 0.0630957344, 0.1584893192, 0.3981071706, 1.0, 2.5118864315, 6.3095734448, 15.8489319246, 39.8107170553, 100.0]
+    gyro_noise:
+      operation: multiply_nominal
+      levels: [0.01, 0.0251188643, 0.0630957344, 0.1584893192, 0.3981071706, 1.0, 2.5118864315, 6.3095734448, 15.8489319246, 39.8107170553, 100.0]
+    rotation_deg:
+      operation: signed_random_direction_offset
+      levels: [-2.0, -1.6, -1.2, -0.8, -0.4, 0.0, 0.4, 0.8, 1.2, 1.6, 2.0]
+    translation_cm:
+      operation: signed_random_direction_offset
+      levels: [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
+    focal_scale:
+      operation: multiply_fx_fy
+      levels: [0.8912509381, 0.9120108394, 0.9332543008, 0.9549925860, 0.9772372209, 1.0, 1.0232929923, 1.0471285481, 1.0715193052, 1.0964781961, 1.1220184543]
+    principal_px:
+      operation: signed_random_direction_offset
+      levels: [-50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0]
+    distortion_scale:
+      operation: multiply_distortion_coefficients
+      levels: [0.5011872336, 0.5754399373, 0.6606934480, 0.7585775750, 0.8709635900, 1.0, 1.1481536215, 1.3182567386, 1.5135612484, 1.7378008287, 1.9952623150]
+  expected_runs_per_method: 297
+  expected_runs_total: 1188
+
+dynamic_stress:
+  sequence: seq1
+  sequence_source: local_implementation_not_explicitly_named_in_paper
+  methods: [AirSLAM, OpenVINS, ORB-SLAM3]
+  excluded_method: SchurVINS
+  occlusion_percent: [3.35, 10, 20, 30, 40, 50, 60, 70, 80, 90]
+  frame_rate_factor: [0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20]
+  definition: frame_rate_factor = perturbed_frame_rate / dataset_frame_rate
+  expected_runs_total: 270
+
+evaluation:
+  translation_metric: APE_RMSE_m
+  alignment: SE3
+  correct_scale: false
+  tool_reported_by_paper: evo
+  coverage: tracked_ground_truth_path_distance / total_ground_truth_path_distance
+  drift_penalty_m_per_s: 0.025
+  max_timestamp_difference_s: 0.02
+  max_timestamp_difference_source: repository_operational_choice_not_specified_in_paper
+
+paper_ambiguities:
+  - "The abstract says five perturbation levels, while Section III/Table I specifies eleven. This repository follows Table I."
+  - "The abstract/introduction mention Relative RMSE, while Section III and the result figures use absolute trajectory RMSE. This repository reports APE RMSE and labels RPE separately."
+  - "The paper gives the 0.025 m/s penalty rate but not a discrete integration formula; the implementation convention is documented in docs/evaluation.md."
+  - "The paper says a fixed trajectory but does not name its sequence ID; local scripts and results use seq1."

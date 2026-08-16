@@ -1,0 +1,38 @@
+%YAML:1.0
+
+image_height: 540
+image_width: 720
+use_imu: 1 # CERBERUS uses IMU
+
+depth_lower_thr: 0.1
+depth_upper_thr: 2.0
+max_y_diff: 5
+
+# Calibration
+distortion_type: 2  # 0 for undistorted inputs, 1 for radial-tangential: [k1, k2, p1, p2, k3], 2 for equidistant/fisheye:  [k1, k2, k3, k4, 0].
+cam0:
+  intrinsics: [347.0714600373, 347.2065313262, 353.3483260506, 262.4739577270] # fx, fy, cx, cy
+  distortion_coeffs: [-0.0465616135, 0.0154916180, -0.0183727378, 0.0064088566, 0] # KB8 model: k1, k2, k3, k4, 0
+  T_type: 0           # 0 for Euroc format, the following T is Tbc. 1 for Kalibr format, the following T is Tcb
+  T:
+  - [-0.999995366272, 0.002788579990, -0.001221169995, 0.045504193063]
+  - [0.001211316004, -0.003532654209, -0.999993026510, 0.024303609178]
+  - [-0.002792874515, -0.999989872037, 0.003529259988, -0.072664510109]
+  - [0.0, 0.0, 0.0, 1.0]
+cam1:
+  intrinsics: [347.5465961342, 347.9974435920, 363.3070250562, 272.5658005717]
+  distortion_coeffs: [-0.0445453514, 0.0153734565, -0.0191317020, 0.0067811113, 0] # KB8 model: k1, k2, k3, k4, 0
+  T_type: 0
+  T:
+  - [-0.999999304482, -0.001171750005, 0.000134300001, -0.054386170384]
+  - [-0.000132406162, -0.001616176263, -0.999998685221, 0.024576378092]
+  - [0.001171965517, -0.999998007486, 0.001616019992, -0.073012808243]
+  - [0.0, 0.0, 0.0, 1.0]
+
+# IMU
+rate_hz: 200
+gyroscope_noise_density: 1.7e-04     # [ rad / s / sqrt(Hz) ]   ( gyro "white noise" ) - Note: CERBERUS has no gyro, set low value
+gyroscope_random_walk: 1.9393e-05       # [ rad / s^2 / sqrt(Hz) ] ( gyro bias diffusion )
+accelerometer_noise_density: 2.0e-03  # [ m / s^2 / sqrt(Hz) ]   ( accel "white noise" )
+accelerometer_random_walk: 3.0e-03    # [ m / s^3 / sqrt(Hz) ].  ( accel bias diffusion )
+g_value: 9.81

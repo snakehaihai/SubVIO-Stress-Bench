@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "subvio-stress-bench"
+version = "0.1.0"
+description = "Failure-centric orchestration and evaluation for subterranean VIO"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+dependencies = [
+  "numpy>=1.21",
+  "PyYAML>=6.0",
+  "matplotlib>=3.4",
+]
+
+[project.scripts]
+subvio-run = "subvio_bench.runner:main"
+subvio-evaluate = "subvio_bench.evaluation:main"
+subvio-discover = "subvio_bench.discovery:main"
+
+[tool.setuptools.packages.find]
+include = ["subvio_bench*"]

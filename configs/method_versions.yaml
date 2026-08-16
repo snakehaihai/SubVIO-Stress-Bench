@@ -1,0 +1,15 @@
+# Reference revisions used when preparing the experiment configurations.
+AirSLAM:
+  repository: https://github.com/YueyingZhu/AirSLAM
+  upstream: https://github.com/sair-lab/AirSLAM
+  commit: e4020a7b54e87affd95ac3015d03806245e647ea
+OpenVINS:
+  repository: https://github.com/rpng/open_vins
+  commit: d0075dd86f2d96618f14829e6c33425f9278610a
+ORB-SLAM3:
+  repository: https://github.com/YueyingZhu/ORB_SLAM3
+  upstream: https://github.com/UZ-SLAMLab/ORB_SLAM3
+  commit: 4452a3c4ab75b1cde34e5505a36ec3f9edcdc4c4
+SchurVINS:
+  repository: https://github.com/bytedance/SchurVINS
+  commit: d8ab6dff20860694d8d879d716d7fd6cb2c2530e

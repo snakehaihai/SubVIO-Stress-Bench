@@ -1,41 +1,28 @@
 # results/
 
-This directory stores all outputs produced by benchmark runs.
-It is organized as follows:
-
-```
-results/
-├── logs/        # Raw execution logs (one .log file per run)
-├── outputs/     # Trajectory estimates and per-sequence metric files
-├── figures/     # Generated plots and visualizations
-├── summaries/   # Aggregated per-perturbation summaries
-└── tables/      # Evaluation tables in CSV and LaTeX format
-```
+This directory stores outputs produced by local benchmark runs. Generated
+trajectories, logs, summaries, tables, and figures are ignored by Git.
 
 ## Notes
 
-- All subdirectories are included in `.gitignore` to prevent committing
-  large generated files.
-- Each subdirectory contains a `.gitkeep` file so the directory structure
-  is tracked by git even when empty.
-- Aggregate summaries and final tables intended for publication should be
-  copied out of this directory and stored separately.
+- Datasets and experiment result data are not distributed in this repository.
+- Each run writes to an isolated directory identified by its experiment ID.
+- Keep method-native outputs in their upstream result directories.
 
 ## Log File Convention
 
-Each log file is named:
-
-```
-{method}__{perturbation}__{severity}__{sequence}__{timestamp}.log
+```text
+results/runs/<experiment-id>/run.log
 ```
 
 ## Output File Convention
 
-```
-results/outputs/{method}/{perturbation}/{severity}/
-├── trajectory.csv     # Estimated poses
-├── metrics.yaml       # Per-sequence metrics
-└── metadata.json      # Run provenance
+```text
+results/runs/<experiment-id>/
+├── run.log
+├── metadata.json
+├── trajectory.txt
+└── metrics.json
 ```
 
-See [docs/evaluation.md](../docs/evaluation.md) for schema details.
+Generated qualitative plots are written under `results/figures/`.

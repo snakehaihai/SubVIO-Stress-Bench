@@ -1,46 +1,54 @@
-.PHONY: help env run run-all summarize figures clean
-
 PYTHON ?= python
+CONFIG ?= configs/default.yaml
+
+.PHONY: help install validate validate-paper manifest verify-assets check-language test self-test dry-run run run-all summarize figures tree clean
 
 help:
-	@echo "SubVIO-Stress-Bench - available targets:"
-	@echo ""
-	@echo "  env        Create the conda environment"
-	@echo "  run        Run a single benchmark evaluation (see Makefile for config)"
-	@echo "  run-all    Run all perturbation experiments"
-	@echo "  summarize  Aggregate results into summaries"
-	@echo "  figures    Generate evaluation figures and tables"
-	@echo "  tree       Print the repository directory tree"
-	@echo "  clean      Remove generated outputs (logs, figures, tables)"
-	@echo ""
+	@echo "install validate validate-paper manifest verify-assets check-language test self-test dry-run run run-all summarize figures tree clean"
 
-env:
-	conda env create -f environment.yml
+install:
+	$(PYTHON) -m pip install -e .
+
+validate:
+	$(PYTHON) -c "from subvio_bench.config import load_config; load_config('$(CONFIG)'); print('configuration valid')"
+
+validate-paper:
+	$(PYTHON) -c "from subvio_bench.protocol import load_protocol; load_protocol(); print('paper protocol valid')"
+
+manifest:
+	$(PYTHON) tools/generate_experiment_manifest.py
+
+verify-assets:
+	$(PYTHON) tools/verify_experiment_assets.py
+
+check-language:
+	$(PYTHON) tools/check_english_only.py
+
+test:
+	$(PYTHON) -m unittest discover -s tests -v
+
+self-test:
+	$(PYTHON) scripts/run_all.py --config configs/self_test.yaml --overwrite
+	$(PYTHON) tools/summarize_results.py --results-dir results/self-test
+	$(PYTHON) tools/generate_figures.py --summary results/self-test/summaries/summary.csv --output-dir results/self-test/figures
+
+dry-run:
+	$(PYTHON) scripts/run_all.py --config $(CONFIG) --include-disabled --dry-run
 
 run:
-	@echo "TODO: add benchmark run command"
-	# $(PYTHON) scripts/run_benchmark.py --config configs/default.yaml
+	$(PYTHON) scripts/run_benchmark.py --config $(CONFIG)
 
 run-all:
-	@echo "TODO: add run-all command"
-	# $(PYTHON) scripts/run_all.py --config configs/all_perturbations.yaml
+	$(PYTHON) scripts/run_all.py --config $(CONFIG)
 
 summarize:
-	@echo "TODO: add summarize command"
-	# $(PYTHON) tools/summarize_results.py --results-dir results/
+	$(PYTHON) tools/summarize_results.py --results-dir results
 
 figures:
-	@echo "TODO: add figure generation command"
-	# $(PYTHON) tools/generate_figures.py --results-dir results/ --output-dir results/figures/
+	$(PYTHON) tools/generate_figures.py
 
 tree:
 	$(PYTHON) tools/tree_summary.py
 
 clean:
-	@echo "Removing generated outputs..."
-	@find results/logs -name "*.log" -delete 2>/dev/null || true
-	@find results/outputs -type f -delete 2>/dev/null || true
-	@find results/figures -type f -delete 2>/dev/null || true
-	@find results/summaries -type f -delete 2>/dev/null || true
-	@find results/tables -type f -delete 2>/dev/null || true
-	@echo "Done."
+	rm -rf results/self-test

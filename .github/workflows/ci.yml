@@ -2,50 +2,39 @@ name: Repository checks
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  lint:
-    name: Lint Python files
+  test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.12"]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
-
-      - name: Install linting tools
-        run: pip install flake8
-
-      - name: Lint with flake8
-        run: |
-          # Fail on syntax errors and undefined names; ignore style warnings for now
-          flake8 tools/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install .
+      - run: python -m unittest discover -s tests -v
+      - run: make validate-paper PYTHON=python
+      - run: make verify-assets PYTHON=python
+      - run: make check-language PYTHON=python
+      - run: make self-test PYTHON=python
+      - run: python scripts/run_all.py --config configs/default.yaml --include-disabled --dry-run
 
   markdown-check:
-    name: Check Markdown files
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check for broken Markdown links (basic)
+      - name: Reject empty Markdown files
         run: |
-          # Simple check: ensure no markdown files are completely empty
-          for f in $(find . -name "*.md" -not -path "./.git/*"); do
-            if [ ! -s "$f" ]; then
-              echo "Empty markdown file: $f"
-              exit 1
-            fi
-          done
-          echo "All Markdown files are non-empty."
+          while IFS= read -r -d '' file; do
+            test -s "$file" || { echo "Empty Markdown file: $file"; exit 1; }
+          done < <(find . -name '*.md' -not -path './.git/*' -print0)

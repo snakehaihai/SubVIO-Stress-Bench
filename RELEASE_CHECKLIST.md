@@ -7,7 +7,7 @@ Use this checklist before tagging a public release.
 ## Documentation
 
 - [ ] README.md is complete, accurate, and reflects the current codebase.
-- [ ] All `TODO` markers in docs/ have been resolved or acknowledged.
+- [ ] Paper citation metadata has been added after acceptance.
 - [ ] Citation BibTeX is finalized with correct paper metadata.
 - [ ] Dataset download instructions are complete and tested.
 - [ ] Environment setup instructions have been verified on a clean machine.
@@ -33,8 +33,9 @@ Use this checklist before tagging a public release.
 - [ ] All issue and PR templates are in place under `.github/`.
 - [ ] CI workflow passes on the release branch.
 - [ ] License is correct and up to date.
-- [ ] All external dependencies and their licenses are noted in `requirements.txt`
-      or `environment.yml`.
+- [ ] All external dependencies and their licenses are noted in
+      `requirements.txt`, `pyproject.toml`, or the method-adapter documentation.
+- [ ] Evaluated method revisions are recorded in `configs/method_versions.yaml`.
 
 ## Final Steps
 

@@ -15,6 +15,7 @@ stress-test benchmark for visual-inertial odometry (VIO) in subterranean environ
 | [Perturbations](perturbations.md) | Description of all perturbation types |
 | [Evaluation](evaluation.md) | Metrics, output formats, and result schemas |
 | [FAQ](faq.md) | Frequently asked questions |
+| [Method adapters](method_adapters.md) | Integrating external VIO runtimes |
 
 ---
 

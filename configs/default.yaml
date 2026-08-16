@@ -1,0 +1,52 @@
+schema_version: 1
+workspace:
+  algorithms_root: ${HOME}/Algs
+  dataset_root: ${HOME}/Datasets/DARPA-CERBERUS
+  output_root: results
+evaluation:
+  max_timestamp_difference_s: 0.02
+  correct_scale: false
+  drift_penalty_m_per_s: 0.025
+experiments:
+  # These adapters point at the verified local entry points. They are disabled
+  # by default because each requires its algorithm-specific Docker/ROS runtime.
+  - id: airslam-seq1-occ30
+    enabled: false
+    method: AirSLAM
+    sequence: seq1_occ_p30
+    perturbation: {type: occlusion, severity: 30}
+    cwd: ${HOME}/Algs/AirSLAM
+    command: [bash, src/airslam/scripts/run_cerberus_composite.sh, --occ]
+    trajectory: ${HOME}/Algs/AirSLAM/Results_airslam/CERBERUS/composite/seq1_occ_p30/trajectory.txt
+    ground_truth: ${HOME}/Datasets/DARPA-CERBERUS/anymal_3/gt_tum/seq1.txt
+    timeout_s: 300
+  - id: orb3-seq1-occ30
+    enabled: false
+    method: ORB-SLAM3
+    sequence: seq1_occ_p30
+    perturbation: {type: occlusion, severity: 30}
+    cwd: ${HOME}/Algs/orb3
+    command: [bash, scripts/run_cerberus_composite_occ.sh, seq1_occ_p30]
+    trajectory: ${HOME}/Algs/orb3/Results_orb3/CERBERUS/composite/seq1_occ_p30/trajectory.txt
+    ground_truth: ${HOME}/Datasets/DARPA-CERBERUS/anymal_3/gt_tum/seq1.txt
+    timeout_s: 300
+  - id: openvins-seq1-occ30
+    enabled: false
+    method: OpenVINS
+    sequence: seq1_occ_p30
+    perturbation: {type: occlusion, severity: 30}
+    cwd: ${HOME}/Algs/OpenVINS
+    command: [bash, src/open_vins/ov_msckf/scripts/run_cerberus_occ.sh, seq1_occ_p30, "false"]
+    trajectory: ${HOME}/Algs/OpenVINS/Results_ov/CERBERUS/occ/seq1_occ_p30/trajectory.txt
+    ground_truth: ${HOME}/Datasets/DARPA-CERBERUS/anymal_3/gt_tum/seq1.txt
+    timeout_s: 300
+  - id: schurvins-seq1-baseline
+    enabled: false
+    method: SchurVINS
+    sequence: seq1
+    perturbation: {type: none, severity: 0}
+    cwd: ${HOME}/Algs/schur
+    command: [bash, debug/run_cerberus_in_container.sh, "${HOME}/Datasets/DARPA-CERBERUS/anymal_3/seq1.bag", imu]
+    trajectory: ${HOME}/Algs/schur/Results_schur/CERBERUS/stereo_imu/seq1/trajectory.txt
+    ground_truth: ${HOME}/Datasets/DARPA-CERBERUS/anymal_3/gt_tum/seq1.txt
+    timeout_s: 600

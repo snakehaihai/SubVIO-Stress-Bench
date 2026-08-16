@@ -1,0 +1,25 @@
+schema_version: 1
+workspace:
+  output_root: results/self-test
+evaluation:
+  max_timestamp_difference_s: 0.02
+  correct_scale: false
+experiments:
+  - id: mock-baseline
+    enabled: true
+    method: mock-vio
+    sequence: synthetic
+    perturbation: {type: none, severity: 0}
+    cwd: .
+    command: [python, examples/mock_method.py, --output, results/self-test/source/baseline.txt]
+    trajectory: results/self-test/source/baseline.txt
+    ground_truth: examples/data/ground_truth.txt
+  - id: mock-degraded
+    enabled: true
+    method: mock-vio
+    sequence: synthetic
+    perturbation: {type: image_degradation, severity: 1}
+    cwd: .
+    command: [python, examples/mock_method.py, --output, results/self-test/source/degraded.txt, --offset, "0.1"]
+    trajectory: results/self-test/source/degraded.txt
+    ground_truth: examples/data/ground_truth.txt

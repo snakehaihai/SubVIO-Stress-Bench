@@ -1,16 +1,5 @@
-# assets/
+# Documentation assets
 
-This directory contains static assets used in the repository documentation.
-
-## Contents
-
-| File | Description |
-|---|---|
-| `banner.png` | Repository banner image for the README header (placeholder) |
-| `benchmark_overview.png` | Benchmark overview / architecture figure (placeholder) |
-
-## Notes
-
-- Place generated or hand-crafted figures here before updating the README.
-- Keep file sizes reasonable; prefer SVG or compressed PNG for diagrams.
-- Large raw data or video files should not be stored here.
+`benchmark_overview.svg` is the source-controlled workflow diagram used by the
+top-level README. Generated experimental plots belong under `results/figures`
+and are ignored by Git unless deliberately selected as a publication artifact.

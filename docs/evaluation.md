@@ -1,77 +1,85 @@
 # Evaluation
 
-This document describes the evaluation metrics, output file formats, and
-result aggregation used in SubVIO-Stress-Bench.
+This document defines the implemented trajectory metrics, standardized run
+outputs, and crash-aware aggregation rules.
 
 ---
 
 ## Metrics
 
-The benchmark reports standard localization accuracy metrics alongside
-failure-mode-specific indicators.
+Ground truth and estimates use TUM order:
+
+```text
+timestamp tx ty tz qx qy qz qw
+```
+
+Comments and extra columns are accepted. Clearly nanosecond-scale timestamps
+are converted to seconds. The evaluator associates nearest timestamps within
+the configured tolerance and then applies Umeyama alignment.
 
 ### Trajectory Accuracy
 
-| Metric | Symbol | Description |
+| Metric | Output field | Definition |
 |---|---|---|
-| Absolute Trajectory Error | ATE | Root-mean-square error after Umeyama alignment |
-| Relative Pose Error (translation) | RPE_t | Mean translational drift per meter of travel |
-| Relative Pose Error (rotation) | RPE_r | Mean rotational drift per meter of travel |
+| Absolute pose error | `ape_translation_rmse_m` | Translational RMSE after rigid SE(3) alignment |
+| Relative pose error | `rpe_translation_rmse_m` | Translational RMSE between adjacent associated pose increments |
+| Distance coverage | `distance_coverage` | Reference path distance between first and last tracked poses divided by full reference path distance |
+| Penalized APE | `penalized_ape_rmse_m` | APE with untracked prefix/tail samples penalized at the configured rate |
 
-<!-- TODO: Verify metric definitions and alignment procedures against scripts -->
+Rigid alignment is the default because the evaluated stereo VIO systems are
+metric-scale. `--correct-scale` enables Sim(3) only for a separately justified
+monocular analysis. The paper states a 0.025 m/s prefix/tail penalty but does
+not specify the discrete integration convention; this repository records its
+deterministic nearest-boundary interpretation in each metric output.
 
 ### Robustness Indicators
 
-| Metric | Description |
+| Indicator | Definition |
 |---|---|
-| Failure rate | Fraction of sequences where the method diverges |
-| Recovery time | Time to re-localize after a divergence event (if applicable) |
-| Degradation slope | Rate of metric degradation as perturbation severity increases |
+| Run status | Success, non-zero exit, timeout, missing trajectory, or evaluation failure |
+| Success count | Number of numeric measured trajectories in an aggregate cell |
+| Crash count | Number of explicit failed process records in an aggregate cell |
+| Missing count | Number of expected protocol records without a source measurement |
+| Partial aggregate | A sensor cell with fewer than three successful directional seeds |
 
-<!-- TODO: Add additional robustness metrics once confirmed -->
+Rotational APE/RPE, recovery time, degradation slope, and uncertainty
+calibration are not currently produced and must not be inferred from the
+implemented translational fields.
 
 ---
 
 ## Output File Format
 
-Each run produces a per-sequence output file in `results/outputs/`:
+Each standardized run is isolated under its experiment ID:
 
-```
-results/outputs/
-└── {method}/{perturbation}/{severity}/
-    ├── trajectory.csv      # Estimated trajectory (timestamp, tx, ty, tz, qx, qy, qz, qw)
-    ├── metrics.yaml        # Per-sequence metric values
-    └── metadata.json       # Run metadata (config, timestamps, version)
+```text
+results/runs/<experiment-id>/
+├── run.log
+├── metadata.json
+├── trajectory.txt
+└── metrics.json
 ```
 
-<!-- TODO: Verify exact file names and formats against scripts -->
+`metadata.json` records the resolved command, method, sequence, perturbation,
+timestamps, return code, status, and configured input/output paths.
+`metrics.json` records association parameters, matched/reference/estimate pose
+counts, the alignment transform, trajectory metrics, and coverage convention.
 
 ---
 
 ## Aggregated Summaries
 
-The `make summarize` command collects per-run metrics and writes:
+```bash
+python tools/summarize_results.py --results-dir results
+```
 
-```
-results/summaries/
-├── summary_{perturbation}.csv   # Per-perturbation-level aggregated metrics
-└── summary_all.csv              # Full cross-method, cross-perturbation table
-```
+The summarizer collects standardized `metrics.json` files produced by enabled
+benchmark runs.
 
 ---
 
 ## Tables and Figures
 
-The `make figures` command generates:
-
-```
-results/tables/
-├── main_table.csv           # Primary evaluation table
-└── main_table.tex           # LaTeX version of the main table
-
-results/figures/
-├── degradation_curves.pdf   # Metric vs. perturbation severity curves
-└── failure_rate_heatmap.pdf # Failure rate heatmap across methods and perturbations
-```
-
-<!-- TODO: Update file names once figure generation scripts are confirmed -->
+`tools/generate_figures.py` plots standardized summary metrics.
+`tools/plot_noise_trajectories.py` plots aligned ground-truth and perturbed TUM
+trajectories as described in [Reproducing Results](reproducing_results.md).

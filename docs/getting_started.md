@@ -1,15 +1,20 @@
 # Getting Started
 
-This guide walks through setting up the environment and running the benchmark
-for the first time.
+This guide walks through installing the repository tools, checking the
+published experiment assets, and preparing a workstation for real method runs.
 
 ---
 
 ## Prerequisites
 
-- Linux or macOS (tested on Ubuntu 20.04+)
-- Python 3.8 or later
-- Conda (recommended) or pip
+- Linux (the original method runs used Ubuntu and ROS environments)
+- Python 3.8 or later for the repository tools
+- Git and Git LFS only if required by an upstream method checkout
+- ROS, Docker, CUDA, and compilers as required by each evaluated method
+
+The original experiments did not use a shared Conda environment. AirSLAM,
+ORB-SLAM3, OpenVINS, and SchurVINS retain their native ROS, Docker, and build
+boundaries.
 
 ---
 
@@ -24,60 +29,74 @@ cd SubVIO-Stress-Bench
 
 ### 2. Create the environment
 
-**With Conda (recommended):**
+Create a lightweight virtual environment for the benchmark utilities:
 
 ```bash
-conda env create -f environment.yml
-conda activate subvio-bench
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e .
 ```
 
-**With pip:**
-
-```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
+Install each VIO method separately using its upstream instructions. Verify
+`experiment_assets/manifest.json`, then copy the matching published
+configurations and scripts into the corresponding upstream checkout.
 
 ### 3. Verify installation
 
 ```bash
-python --version
-# TODO: add a lightweight self-test command, e.g.:
-# python -c "import numpy, pandas, matplotlib; print('OK')"
+make validate-paper
+make verify-assets
+make check-language
+make test
+make self-test
 ```
+
+`make self-test` runs deterministic mock trajectories and does not require the
+CERBERUS data, ROS, Docker, CUDA, or an evaluated method.
 
 ---
 
 ## Data Preparation
 
-See [Dataset Layout](dataset_layout.md) for the full data directory structure.
+See [Dataset Layout](dataset_layout.md) for provenance and the exact layout.
 
-1. Download the CERBERUS dataset sequences.
-   <!-- TODO: add official download link -->
-2. Place the sequences under `data/cerberus/` (or update the path in `configs/`).
+1. Download the processed VIO-oriented release from
+   [zhuyyyy/CERBERUS](https://huggingface.co/datasets/zhuyyyy/CERBERUS).
+2. Copy `configs/local_paths.example.yaml` to `configs/local_paths.yaml` and
+   edit only workstation-specific paths. The copied file is ignored by Git.
+3. Keep the base release separate from locally generated masks, perturbed
+   folders, and perturbed bags.
 
 ---
 
 ## Running the Benchmark
 
 ```bash
-# Run with default settings
-make run
+# Inspect every resolved command before execution
+make dry-run CONFIG=configs/local.yaml
 
-# Run all perturbation experiments
-make run-all
+# Run enabled method adapters in their already prepared native environments
+make run-all CONFIG=configs/local.yaml
+
+# Aggregate newly evaluated trajectories
+make summarize
+make figures
 
 # See all available commands
 make help
 ```
 
-<!-- TODO: Add more detail once the run scripts and configs are confirmed -->
+`run-all` is an orchestrator, not a universal environment installer. A method
+crash is retained as a failed run with its log and metadata; it is never
+converted into an artificial RMSE value.
 
 ---
 
 ## Next Steps
 
-- See [Reproducing Results](reproducing_results.md) to replicate paper experiments.
-- See [Perturbations](perturbations.md) for details on the perturbation framework.
-- See [Evaluation](evaluation.md) for metric definitions.
+- See [Reproducing Results](reproducing_results.md) for the full workflow and
+  crash-aware aggregation policy.
+- See [Perturbations](perturbations.md) for the paper-derived parameter grid.
+- See [Evaluation](evaluation.md) for metric definitions and output fields.
+- See [Method Adapters](method_adapters.md) before enabling a real algorithm.

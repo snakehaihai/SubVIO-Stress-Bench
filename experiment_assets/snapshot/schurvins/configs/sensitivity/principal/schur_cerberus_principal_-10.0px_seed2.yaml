@@ -1,0 +1,74 @@
+label: "CERBERUS"
+id: cerberus_stereo
+cameras:
+- camera:
+    label: cam0
+    id: cam0_839e02677a1f4b5c91466b2bc5fdc33e
+    line-delay-nanoseconds: 0
+    image_height: 540
+    image_width: 720
+    type: pinhole
+
+    intrinsics:
+      cols: 1
+      rows: 4
+      data: [347.071460037321, 347.206531326242, 349.60384527767104, 271.74643656174777]
+    distortion:
+      type: equidistant
+      parameters:
+        cols: 1
+        rows: 4
+        data: [-0.0465616135172277, 0.0154916180194402, -0.0183727378173674, 0.00640885660693302]
+  T_B_C:
+    cols: 4
+    rows: 4
+    data: [-0.999995366272, 0.00278857999, -0.001221169995, 0.045504193063,
+           0.001211316004, -0.003532654209, -0.99999302651, 0.024303609178,
+           -0.002792874515, -0.999989872037, 0.003529259988, -0.072664510109,
+           0, 0, 0, 1]
+- camera:
+    label: cam1
+    id: cam1_839e02677a1f4b5c91466b2bc5fdc33e
+    line-delay-nanoseconds: 0
+    image_height: 540
+    image_width: 720
+    type: pinhole
+
+    intrinsics:
+      cols: 1
+      rows: 4
+      data: [347.546596134171, 347.99744359199, 359.562544283321, 281.83827940643675]
+    distortion:
+      type: equidistant
+      parameters:
+        cols: 1
+        rows: 4
+        data: [-0.0445453513806739, 0.0153734565187101, -0.0191317019617576, 0.00678111126815628]
+  T_B_C:
+    cols: 4
+    rows: 4
+    data: [-0.999999304482, -0.00117175000525, 0.000134300000602, -0.054386170384,
+           -0.000132406161573, -0.00161617626327, -0.999998685221, 0.024576378092,
+           0.00117196551713, -0.999998007486, 0.00161601999227, -0.0730128082425,
+           0, 0, 0, 1]
+
+imu_params:
+  delay_imu_cam: 0.0
+  max_imu_delta_t: 0.01
+  acc_max: 150.0
+  omega_max: 7.5
+  sigma_omega_c: 1.7e-04      #  (rad/s/Hz) = gyr_n
+  sigma_acc_c: 0.002        #  (m/s/Hz) = acc_n
+  sigma_omega_bias_c: 1.9393e-05  #  (rad/s/Hz) = gyr_w
+  sigma_acc_bias_c: 0.003   #  (m/s/Hz) = acc_w
+  sigma_integration: 0.0
+  g: 9.8082
+  imu_rate: 200
+
+imu_initialization:
+  velocity: [0.0, 0, 0.0]
+  omega_bias: [0.0, 0, 0.0]
+  acc_bias: [0.0, 0, 0.0]
+  velocity_sigma: 2.0
+  omega_bias_sigma: 0.001
+  acc_bias_sigma: 0.02

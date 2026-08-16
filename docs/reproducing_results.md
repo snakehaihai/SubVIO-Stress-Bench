@@ -1,84 +1,97 @@
 # Reproducing Results
 
-This document describes how to reproduce the benchmark results reported in the paper.
+This guide describes how to run the published configurations and generate the
+qualitative trajectory-deformation figure from locally produced trajectories.
 
 ---
 
 ## Overview
 
-The reproduction pipeline consists of four stages:
-
-1. **Data preparation**: Download and organize the CERBERUS dataset.
-2. **Perturbation application**: Apply controlled perturbations to sensor data.
-3. **Method evaluation**: Run each VIO method on perturbed sequences.
-4. **Result aggregation**: Collect metrics, generate tables, and produce figures.
+The repository provides the experiment protocol, method-specific
+configurations, perturbation scripts, benchmark runner, trajectory evaluator,
+and plotting utility. Datasets, algorithm installations, model weights, and
+experiment outputs are not included.
 
 ---
 
 ## Step 1: Data Preparation
 
-See [Dataset Layout](dataset_layout.md) for the expected directory structure.
+Download the processed CERBERUS release and configure local paths as described
+in [Dataset Layout](dataset_layout.md):
 
 ```bash
-# TODO: add data download / preparation command
+cp configs/local_paths.example.yaml configs/local_paths.yaml
 ```
 
 ---
 
 ## Step 2: Perturbation Application
 
-<!-- TODO: describe how perturbations are applied to the raw data -->
-
-Perturbation configurations are stored in `configs/`.
-Each configuration specifies the perturbation type, magnitude, and affected sequences.
+Verify the published configuration and script snapshot:
 
 ```bash
-# TODO: add perturbation application command
+make verify-assets
+make validate-paper
 ```
+
+Install the required files from `experiment_assets/snapshot/` into matching
+method checkouts. Generate perturbed folders or ROS bags with the dataset tools
+under `experiment_assets/snapshot/dataset/scripts/`.
 
 ---
 
 ## Step 3: Running Evaluations
 
+Configure enabled method adapters and inspect their commands before execution:
+
 ```bash
-make run-all
+make dry-run CONFIG=configs/local.yaml
+make run-all CONFIG=configs/local.yaml
 ```
 
-This will iterate over all method--perturbation combinations defined in the
-experiment configuration and write outputs to `results/outputs/`.
-
-<!-- TODO: Describe the structure of individual run commands once scripts are confirmed -->
+Each method runs in its own upstream ROS, Docker, CUDA, or native build
+environment. The benchmark runner records logs, status, and the configured TUM
+trajectory output for each experiment.
 
 ---
 
 ## Step 4: Aggregating Results
 
+The trajectory-deformation figure is drawn directly from a TUM ground-truth
+trajectory and one or more locally generated perturbed trajectories:
+
 ```bash
-make summarize  # produces results/summaries/
-make figures    # produces results/figures/ and results/tables/
+python tools/plot_noise_trajectories.py \
+  --ground-truth /path/to/groundtruth/seq1.txt \
+  --estimate "acc_noise_100x=/path/to/acc_noise_trajectory.txt" \
+  --estimate "gyro_noise_39.81x=/path/to/gyro_noise_trajectory.txt" \
+  --estimate "focal_1.12x=/path/to/focal_trajectory.txt" \
+  --output results/figures/noise_trajectories.png
 ```
+
+Each `--estimate` argument uses `LABEL=PATH` and may be repeated. The tool:
+
+1. loads the first eight TUM columns;
+2. associates estimate and ground-truth timestamps within 0.02 seconds;
+3. applies rigid SE(3) Umeyama alignment without scale correction;
+4. computes translational RMSE on associated poses;
+5. plots the aligned XY trajectories and distance-versus-height profiles.
+
+No experiment result table is required by this plotting command.
 
 ---
 
 ## Expected Outputs
 
-After a full run, you should find:
-
-```
-results/
-├── logs/         # One log file per experiment run
-├── outputs/      # Raw trajectory estimates and per-sequence metrics
-├── summaries/    # Aggregated per-perturbation-level summaries
-├── figures/      # PNG / PDF plots
-└── tables/       # CSV and LaTeX tables
-```
-
-<!-- TODO: Add representative output snippets or table previews once confirmed -->
+The command writes the requested PNG file under `results/figures/`. Generated
+figures and trajectories remain ignored by Git.
 
 ---
 
 ## Notes on Reproducibility
 
-- All random seeds used in experiments are fixed in the configuration files.
-- Results may vary slightly depending on hardware and software versions.
-- See [FAQ](faq.md) for troubleshooting common issues.
+- Record the dataset revision, method commit, configuration filename, seed,
+  and trajectory filename for each plotted curve.
+- Use the same ground truth and timestamp tolerance for every method.
+- Do not enable Sim(3) scale correction for metric stereo-inertial results.
+- Keep datasets and generated experiment outputs outside the repository.

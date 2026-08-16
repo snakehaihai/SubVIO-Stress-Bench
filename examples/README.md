@@ -1,24 +1,9 @@
-# examples/
+# Examples
 
-This directory provides minimal, self-contained examples illustrating
-how to use SubVIO-Stress-Bench.
+`mock_method.py` and `data/ground_truth.txt` form a deterministic end-to-end
+fixture used by `configs/self_test.yaml`. Run `make self-test`; no ROS, Docker,
+GPU, or external dataset is required.
 
-## Planned Examples
-
-<!-- TODO: Populate once benchmark scripts are finalized -->
-
-| Example | Description |
-|---|---|
-| `run_single_sequence.py` | Run one method on one sequence without perturbation |
-| `apply_perturbation.py` | Apply a single perturbation and visualize the effect |
-| `compute_metrics.py` | Compute evaluation metrics for a saved trajectory estimate |
-
-## Usage
-
-```bash
-# TODO: Add example run commands
-```
-
-Each example is designed to run in under a few minutes on a standard laptop.
-All examples assume the environment is set up as described in
-[Getting Started](../docs/getting_started.md).
+The mock output deliberately includes a global translation, demonstrating that
+the evaluator aligns trajectories before computing APE. The degraded fixture
+adds a non-rigid deviation so its error is measurably higher than baseline.
