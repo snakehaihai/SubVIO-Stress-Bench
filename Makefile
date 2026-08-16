@@ -1,10 +1,10 @@
 PYTHON ?= python
 CONFIG ?= configs/default.yaml
 
-.PHONY: help install validate validate-paper manifest verify-assets check-language test self-test dry-run run run-all summarize figures tree clean
+.PHONY: help install validate validate-protocol manifest verify-assets check-language test self-test dry-run run run-all summarize figures tree clean
 
 help:
-	@echo "install validate validate-paper manifest verify-assets check-language test self-test dry-run run run-all summarize figures tree clean"
+	@echo "install validate validate-protocol manifest verify-assets check-language test self-test dry-run run run-all summarize figures tree clean"
 
 install:
 	$(PYTHON) -m pip install -e .
@@ -12,8 +12,8 @@ install:
 validate:
 	$(PYTHON) -c "from subvio_bench.config import load_config; load_config('$(CONFIG)'); print('configuration valid')"
 
-validate-paper:
-	$(PYTHON) -c "from subvio_bench.protocol import load_protocol; load_protocol(); print('paper protocol valid')"
+validate-protocol:
+	$(PYTHON) -c "from subvio_bench.protocol import load_protocol; load_protocol(); print('benchmark protocol valid')"
 
 manifest:
 	$(PYTHON) tools/generate_experiment_manifest.py

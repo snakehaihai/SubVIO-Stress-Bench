@@ -7,8 +7,7 @@ Use this checklist before tagging a public release.
 ## Documentation
 
 - [ ] README.md is complete, accurate, and reflects the current codebase.
-- [ ] Paper citation metadata has been added after acceptance.
-- [ ] Citation BibTeX is finalized with correct paper metadata.
+- [ ] Citation information has been finalized.
 - [ ] Dataset download instructions are complete and tested.
 - [ ] Environment setup instructions have been verified on a clean machine.
 - [ ] CHANGELOG.md has been updated for this release.

@@ -1,9 +1,8 @@
 # SubVIO-Stress-Bench
 
-[![Paper](https://img.shields.io/badge/paper-IROS%202026%20draft-blue)]()
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue)](pyproject.toml)
-[![Platform](https://img.shields.io/badge/platform-Ubuntu20.04%20%7C%20macOS-lightgrey)]()
+[![Platform](https://img.shields.io/badge/platform-Ubuntu%20Linux-lightgrey)]()
 
 **SubVIO-Stress-Bench** is a failure-centric stress-test benchmark for visual-inertial odometry (VIO)
 in subterranean environments.
@@ -37,7 +36,7 @@ SubVIO-Stress-Bench targets the intersection of two open problems in state estim
 The benchmark provides a standardized test harness to expose failure modes and quantify
 degradation across a representative set of modern VIO algorithms.
 
-The paper protocol uses four methods, nine one-at-a-time sensor dimensions,
+The benchmark protocol uses four methods, nine one-at-a-time sensor dimensions,
 11 levels, and three directional seeds. This produces 297 sensor configurations
 per method. The dynamic benchmark contains 10 occlusion ratios and nine dynamic
 factors for AirSLAM, OpenVINS, and ORB-SLAM3, producing 270 configurations.
@@ -60,7 +59,7 @@ factors for AirSLAM, OpenVINS, and ORB-SLAM3, producing 270 configurations.
 | Dynamic Occlusion | Moving obstacles | Mask frame-rate factor `d = F_mask / F_dataset`, from 0.05 to 20 |
 
 The exact numerical levels, units, seeds, and expected counts are defined in
-[`configs/paper_protocol.yaml`](configs/paper_protocol.yaml). The local scripts
+[`configs/benchmark_protocol.yaml`](configs/benchmark_protocol.yaml). The local scripts
 modify IMU bias random-walk parameters; the repository uses that precise term
 instead of silently claiming deterministic bias injection.
 
@@ -150,7 +149,7 @@ python -m pip install --upgrade pip
 python -m pip install -e .
 
 # 3. Verify the protocol and published local experiment assets
-make validate-paper
+make validate-protocol
 make verify-assets
 make check-language
 make test
@@ -168,8 +167,9 @@ cp configs/local_paths.example.yaml configs/local_paths.yaml
 # Edit configs/local_paths.yaml; this file is ignored by Git.
 ```
 
-`make self-test` does not require ROS, Docker, a GPU, or the dataset. Real
-method execution uses the native environment of each upstream algorithm.
+`make self-test` does not require ROS, Docker, a GPU, or the dataset. Full
+algorithm runs use separate Docker environments because the evaluated methods
+have incompatible ROS, compiler, CUDA, and library requirements.
 
 ---
 
@@ -190,25 +190,30 @@ python -m pip install -e .
 <details>
 <summary>Evaluated methods</summary>
 
-The original experiments did not use one shared Conda environment. Install the
-published files from `experiment_assets/snapshot/` into matching algorithm
-checkouts, then use each method's native ROS/Docker environment:
+The experiments did not use one shared Conda environment. Each algorithm ran
+in its own Docker environment, while the lightweight benchmark controller ran
+on the Ubuntu host. Reproduction does not require the original workstation
+images: build or select an equivalent container from the upstream requirements,
+mount the algorithm checkout and CERBERUS data, and update the adapter command
+and paths for that container.
 
-| Method | Runtime boundary |
-|---|---|
-| AirSLAM | ROS catkin workspace and the AirSLAM GPU container |
-| ORB-SLAM3 | Native/CMake or the local ORB-SLAM3 container |
-| OpenVINS | ROS and the OpenVINS container/workspace |
-| SchurVINS | ROS and the SchurVINS container/workspace |
+| Method | Container baseline | Official setup |
+|---|---|---|
+| AirSLAM | Ubuntu 20.04, ROS Noetic, CUDA 12.1, TensorRT 8.6.1.6, NVIDIA runtime | [AirSLAM Docker and build instructions](https://github.com/sair-lab/AirSLAM#-test-environment) |
+| OpenVINS | Official ROS 1 Ubuntu 20.04 Dockerfile (`Dockerfile_ros1_20_04`) | [OpenVINS Docker guide](https://docs.openvins.com/dev-docker.html) |
+| ORB-SLAM3 | Ubuntu 18.04, optional ROS Melodic, C++11, Pangolin, OpenCV >= 3.0, Eigen >= 3.1 | [ORB-SLAM3 prerequisites and build](https://github.com/UZ-SLAMLab/ORB_SLAM3#2-prerequisites) |
+| SchurVINS | Ubuntu 18.04, ROS Melodic, catkin tools, OpenCV, yaml-cpp, Ceres dependencies | [SchurVINS prerequisites and build](https://github.com/bytedance/SchurVINS#2-prerequisites) |
 
 Run `make verify-assets` before installing the snapshot. Its manifest records
 the source path and SHA-256 of every local configuration and script.
 
 </details>
 
-Requirements: Python 3.8 or later for repository tools; method-specific ROS,
-compiler, CUDA, and Docker requirements follow their upstream projects.
-See [docs/getting_started.md](docs/getting_started.md) for full environment notes.
+Requirements: Ubuntu Linux and Python 3.8 or later for repository tools, plus
+Docker Engine. AirSLAM also requires an NVIDIA GPU, compatible host driver, and
+the NVIDIA Container Toolkit. See
+[docs/getting_started.md](docs/getting_started.md) for container setup and
+adapter integration.
 
 ---
 
@@ -306,24 +311,7 @@ result file schemas.
 
 ## Citation
 
-The VIO robustness manuscript is currently an anonymous IROS 2026 draft. Its
-final authors, title metadata, and DOI must be inserted after acceptance; the
-repository does not publish an invented citation.
-
-For the original dataset, cite the Team CERBERUS dataset and associated work:
-
-```bibtex
-@article{tranzatto2024teamcerberus,
-  title   = {Team CERBERUS Wins the DARPA Subterranean Challenge:
-             Technical Overview and Lessons Learned},
-  author  = {Tranzatto, Marco and others},
-  journal = {Field Robotics},
-  volume  = {4},
-  pages   = {249--312},
-  year    = {2024},
-  doi     = {10.55417/fr.2024009}
-}
-```
+TODO.
 
 ---
 

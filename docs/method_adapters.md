@@ -18,9 +18,11 @@ truth, working directory, environment, and timeout.
 ```
 
 Commands are executed without a shell. Put environment variables under `env`
-instead of embedding `export`, redirection, or pipelines. The method script may
-run directly or call a pre-existing container; the benchmark does not assume a
-single ROS distribution or Docker image.
+instead of embedding `export`, redirection, or pipelines. Full method runs use
+separate Docker environments. An adapter may invoke `docker run`, `docker exec`,
+Docker Compose, or a small host wrapper; it must not rely on a particular local
+image ID or absolute host path. See [Getting Started](getting_started.md) for
+the required dependency boundary of each algorithm.
 
 Verified local entry points are documented in `materials/`:
 

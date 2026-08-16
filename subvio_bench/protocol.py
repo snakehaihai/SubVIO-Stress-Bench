@@ -1,4 +1,4 @@
-"""Validation helpers for the paper protocol manifest."""
+"""Validation helpers for the benchmark protocol manifest."""
 
 from __future__ import annotations
 
@@ -9,10 +9,10 @@ import yaml
 
 
 class ProtocolError(ValueError):
-    """Raised when the paper protocol is internally inconsistent."""
+    """Raised when the benchmark protocol is internally inconsistent."""
 
 
-def load_protocol(path: Union[str, Path] = "configs/paper_protocol.yaml") -> dict[str, Any]:
+def load_protocol(path: Union[str, Path] = "configs/benchmark_protocol.yaml") -> dict[str, Any]:
     with Path(path).open(encoding="utf-8") as stream:
         protocol = yaml.safe_load(stream)
     validate_protocol(protocol)
@@ -23,9 +23,9 @@ def validate_protocol(protocol: dict[str, Any]) -> None:
     sensor = protocol["sensor_stress"]
     dimensions = sensor["dimensions"]
     if len(dimensions) != 9:
-        raise ProtocolError("paper protocol requires nine sensor dimensions")
+        raise ProtocolError("benchmark protocol requires nine sensor dimensions")
     if sensor["seeds"] != [0, 1, 2]:
-        raise ProtocolError("paper protocol requires seeds 0, 1, and 2")
+        raise ProtocolError("benchmark protocol requires seeds 0, 1, and 2")
     for name, specification in dimensions.items():
         if len(specification["levels"]) != 11:
             raise ProtocolError(f"{name} must contain eleven levels")
@@ -38,4 +38,4 @@ def validate_protocol(protocol: dict[str, Any]) -> None:
         raise ProtocolError("dynamic expected_runs_total is inconsistent")
     evaluation = protocol["evaluation"]
     if evaluation["alignment"] != "SE3" or evaluation["correct_scale"]:
-        raise ProtocolError("paper evaluation requires rigid SE(3), without scale correction")
+        raise ProtocolError("benchmark evaluation requires rigid SE(3), without scale correction")

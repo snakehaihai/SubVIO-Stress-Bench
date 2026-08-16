@@ -5,8 +5,8 @@ from tools.generate_experiment_manifest import rows_from_protocol
 
 
 class ProtocolTest(unittest.TestCase):
-    def test_complete_paper_matrix(self):
-        protocol = load_protocol("configs/paper_protocol.yaml")
+    def test_complete_benchmark_matrix(self):
+        protocol = load_protocol("configs/benchmark_protocol.yaml")
         rows = rows_from_protocol(protocol)
         self.assertEqual(len(rows), 1458)
         self.assertEqual(len({row["experiment_id"] for row in rows}), 1458)

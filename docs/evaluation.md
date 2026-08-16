@@ -28,7 +28,7 @@ the configured tolerance and then applies Umeyama alignment.
 
 Rigid alignment is the default because the evaluated stereo VIO systems are
 metric-scale. `--correct-scale` enables Sim(3) only for a separately justified
-monocular analysis. The paper states a 0.025 m/s prefix/tail penalty but does
+monocular analysis. The benchmark uses a 0.025 m/s prefix/tail penalty but does
 not specify the discrete integration convention; this repository records its
 deterministic nearest-boundary interpretation in each metric output.
 

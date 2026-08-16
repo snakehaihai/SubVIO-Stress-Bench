@@ -31,7 +31,7 @@ Verify the published configuration and script snapshot:
 
 ```bash
 make verify-assets
-make validate-paper
+make validate-protocol
 ```
 
 Install the required files from `experiment_assets/snapshot/` into matching

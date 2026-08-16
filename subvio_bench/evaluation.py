@@ -19,11 +19,11 @@ def evaluate(
     with_scale: bool = False,
     drift_penalty_m_per_s: float = 0.025,
 ) -> dict[str, Any]:
-    """Evaluate one trajectory using the paper's distance-coverage protocol.
+    """Evaluate one trajectory using the benchmark distance-coverage protocol.
 
     ``penalized_ape_rmse_m`` includes untracked prefix/tail reference samples.
     Their error grows linearly from zero at the closest tracked boundary using
-    ``drift_penalty_m_per_s``.  The paper states the rate but not the discrete
+    ``drift_penalty_m_per_s``. The benchmark configuration states the rate; the
     integration convention; this convention is therefore recorded explicitly.
     """
     reference = load_tum(reference_path)

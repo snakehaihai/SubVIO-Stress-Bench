@@ -1,6 +1,6 @@
 # configs/
 
-This directory stores the paper protocol, benchmark adapter configurations,
+This directory stores the benchmark protocol, adapter configurations,
 method revision records, and a portable local-path template.
 
 ## Structure
@@ -10,7 +10,7 @@ configs/
 ├── README.md                 # This file
 ├── default.yaml              # Disabled real-method adapter examples
 ├── self_test.yaml            # Portable deterministic smoke test
-├── paper_protocol.yaml       # Paper-derived experiment and metric contract
+├── benchmark_protocol.yaml       # Experiment and metric contract
 ├── method_versions.yaml      # Reference upstream revisions
 └── local_paths.example.yaml  # Template for ignored workstation paths
 ```

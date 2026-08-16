@@ -1,8 +1,4 @@
 schema_version: 1
-source:
-  title: "How to Prevent Visual-Inertial Odometry Failure: A Comprehensive Robustness Analysis of Sensor Sensitivity and Obstacle Resilience"
-  manuscript: IROS_2026_Visual_SLAM_Study.pdf
-  status: anonymous_draft
 
 dataset:
   name: DARPA Subterranean Challenge CERBERUS
@@ -21,7 +17,7 @@ methods: [AirSLAM, OpenVINS, ORB-SLAM3, SchurVINS]
 sensor_stress:
   design: one_at_a_time
   sequence: seq1
-  sequence_source: local_implementation_not_explicitly_named_in_paper
+  sequence_source: benchmark_default
   seeds: [0, 1, 2]
   dimensions:
     acc_bias:
@@ -58,7 +54,7 @@ sensor_stress:
 
 dynamic_stress:
   sequence: seq1
-  sequence_source: local_implementation_not_explicitly_named_in_paper
+  sequence_source: benchmark_default
   methods: [AirSLAM, OpenVINS, ORB-SLAM3]
   excluded_method: SchurVINS
   occlusion_percent: [3.35, 10, 20, 30, 40, 50, 60, 70, 80, 90]
@@ -70,14 +66,8 @@ evaluation:
   translation_metric: APE_RMSE_m
   alignment: SE3
   correct_scale: false
-  tool_reported_by_paper: evo
+  reference_tool: evo
   coverage: tracked_ground_truth_path_distance / total_ground_truth_path_distance
   drift_penalty_m_per_s: 0.025
   max_timestamp_difference_s: 0.02
-  max_timestamp_difference_source: repository_operational_choice_not_specified_in_paper
-
-paper_ambiguities:
-  - "The abstract says five perturbation levels, while Section III/Table I specifies eleven. This repository follows Table I."
-  - "The abstract/introduction mention Relative RMSE, while Section III and the result figures use absolute trajectory RMSE. This repository reports APE RMSE and labels RPE separately."
-  - "The paper gives the 0.025 m/s penalty rate but not a discrete integration formula; the implementation convention is documented in docs/evaluation.md."
-  - "The paper says a fixed trajectory but does not name its sequence ID; local scripts and results use seq1."
+  max_timestamp_difference_source: benchmark_default

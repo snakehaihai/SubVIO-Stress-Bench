@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Expand the paper protocol into the complete 1,458-row experiment matrix."""
+"""Expand the benchmark protocol into the complete experiment matrix."""
 
 from __future__ import annotations
 
@@ -46,8 +46,8 @@ def rows_from_protocol(protocol: dict) -> list[dict[str, object]]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--protocol", default="configs/paper_protocol.yaml")
-    parser.add_argument("--output", type=Path, default=Path("results/paper/experiment_manifest.csv"))
+    parser.add_argument("--protocol", default="configs/benchmark_protocol.yaml")
+    parser.add_argument("--output", type=Path, default=Path("results/benchmark/experiment_manifest.csv"))
     args = parser.parse_args()
     rows = rows_from_protocol(load_protocol(args.protocol))
     args.output.parent.mkdir(parents=True, exist_ok=True)
